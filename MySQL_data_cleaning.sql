@@ -1,3 +1,7 @@
+-- SQL PROJECT - Data Cleaning
+
+
+-- Create a copy table to insert the data from the raw dataset. To preserves the original dataset
 CREATE TABLE `dataset_copy2` (
   `company` text,
   `location` text,
@@ -11,32 +15,34 @@ CREATE TABLE `dataset_copy2` (
   `row_num` INT 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+
+-- Inserting the values from the original dataset
 INSERT INTO dataset_copy2
 SELECT *,
 ROW_NUMBER() OVER(
 PARTITION BY company, location, industry, total_laid_off, percentage_laid_off, `date`, stage, country, funds_raised_millions) AS row_num
 FROM dataset_copy;
 
-DELETE 
-FROM dataset_copy2
-WHERE row_num > 1;
-
+-- Viewing the duplicates 
 SELECT *
 FROM dataset_copy2
 WHERE row_num > 1;
 
--- Standardizing data
 
+-- Standardizing data
 SELECT company, TRIM(company)
 FROM dataset_copy2;
 
+-- Updating the dataset
 UPDATE dataset_copy2
 SET company = TRIM(company);
 
+-- Viewing dirty columns
 SELECT *
 FROM dataset_copy2
 WHERE industry LIKE 'Crypto%';
 
+-- Cleaning the dirty columns
 UPDATE dataset_copy2
 SET industry = 'Crypto'
 WHERE industry LIKE 'Crypto%';
