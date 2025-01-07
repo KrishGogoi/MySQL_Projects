@@ -3,45 +3,64 @@
 SELECT *
 FROM dataset_copy2;
 
+-- Looking at Maximum percentage of laid off
 SELECT MAX(total_laid_off), MAX(percentage_laid_off)
 FROM dataset_copy2;
 
+SELECT MIN(`date`), MAX(`date`)
+FROM dataset_copy2;
+
+-- if we order by funds_raised_millions we can see the size of these companies
 SELECT *
 FROM dataset_copy2
 WHERE percentage_laid_off = 1
 ORDER BY funds_raised_millions DESC;
 
+-- Companies with the most total layoff
 SELECT company, SUM(total_laid_off)
 FROM dataset_copy2
 GROUP BY company
 ORDER BY 2 DESC;
 
-SELECT MIN(`date`), MAX(`date`)
-FROM dataset_copy2;
+-- Total laid off by location
+SELECT location, SUM(total_laid_off)
+FROM dataset_copy2
+GROUP BY company
+ORDER BY 2 DESC;
 
+-- Total laid off by industry
 SELECT industry, SUM(total_laid_off)
 FROM dataset_copy2
 GROUP BY industry
 ORDER BY 2 DESC;
 
+-- Total laid off by country
 SELECT country, SUM(total_laid_off)
 FROM dataset_copy2
 GROUP BY country
 ORDER BY 2 DESC;
 
+-- Total laid off by different year
 SELECT YEAR(`date`), SUM(total_laid_off)
 FROM dataset_copy2
 GROUP BY YEAR(`date`)
 ORDER BY 1 DESC;
 
-
+-- Rolling total layoffs Per Month
 SELECT SUBSTRING(`date`, 1, 7) AS `MONTH`, SUM(total_laid_off)
 FROM dataset_copy2
 WHERE SUBSTRING(`date`, 1, 7) IS NOT NULL
 GROUP BY `MONTH`
 ORDER BY 1 ASC;
 
+-- Total laid off by company per year
+SELECT company, YEAR(`date`), SUM(total_laid_off)
+FROM dataset_copy2
+GROUP BY company, YEAR(`date`)
+ORDER BY 3 DESC;
 
+
+-- Rolling total of total laid off by month 
 WITH Rolling_Total AS
 (
 SELECT SUBSTRING(`date`, 1, 7) AS `MONTH`, SUM(total_laid_off) AS total_off
@@ -56,12 +75,7 @@ FROM Rolling_Total
 ;
 
 
-SELECT company, YEAR(`date`), SUM(total_laid_off)
-FROM dataset_copy2
-GROUP BY company, YEAR(`date`)
-ORDER BY 3 DESC;
-
-
+-- Top 5 company who laid off 
 WITH Company_Year(company, years, total_laid_off) AS
 (
 SELECT company, YEAR(`date`), SUM(total_laid_off)
@@ -78,16 +92,3 @@ WHERE years IS NOT NULL
 SELECT *
 FROM Company_Year_Rank
 WHERE Ranking <= 5;
-
-
-
-
-
-
-
-
-
-
-
-
-
