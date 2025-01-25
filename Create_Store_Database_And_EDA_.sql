@@ -127,6 +127,8 @@ INSERT INTO `order_items` VALUES (10,9,9,4.28);
 
 
 
+--- Exploratory Data Analysis (EDA) 
+
 USE sql_store;
 
 SELECT * FROM sql_store.customers;
